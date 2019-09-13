@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ''' This is a demo file for the PCA model.
     API usage:
         dataloader.load_HDFS(): load HDFS dataset

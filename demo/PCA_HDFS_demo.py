@@ -12,22 +12,21 @@ from loglizer import dataloader, preprocessing, graphs_and_reports
 
 if __name__ == '__main__':
 
-    train_path = r'..\data\HDFS\test.csv'
+    train_path = r'..\data\HDFS\HDFS_100k.log_structured.csv'
     test_path = r'..\data\HDFS\HDFS_100k.log_structured.csv'
     # time period in seconds within which anomalies will be searched
     time_delta_sec = 100
 
-    x_train = dataloader.load_HDFS_data_timestamp_approach(train_path, time_delta_sec=time_delta_sec,
-                                                          timestamp_format='%Y-%m-%d %H:%M:%S',
-                                                          cached_workflow_path=r'..\cached\HDFS\train_workflow.csv')
+    # x_train = dataloader.load_HDFS_data_timestamp_approach(train_path, time_delta_sec=time_delta_sec,
+    #                                                       timestamp_format='%Y-%m-%d %H:%M:%S',
+    #                                                       cached_workflow_path=r'..\cached\HDFS\train_workflow.csv')
     x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\train_workflow.csv')
 
-    graphs_and_reports.make_key_id_dict(input_path="../data/HDFS/presentation_train.csv",
+    graphs_and_reports.make_key_id_dict(input_path="../data/HDFS/HDFS_100k.log_structured.csv",
                                         output_path="../analysis_results/HDFS/key_dict.txt")
 
     feature_extractor = preprocessing.FeatureExtractor()
     x_train = feature_extractor.df_fit_transform(x_train)
-    # x_train = feature_extractor.fit_transform(x_train)
 
     graphs_and_reports.add_weights_to_key_dict("../analysis_results/HDFS/key_dict.txt",
                                                feature_extractor.idf_vec.to_dict(),
@@ -47,10 +46,10 @@ if __name__ == '__main__':
     print(prediction)
     print(prediction['prediction'].values)
 
-    x_train = dataloader.load_HDFS_data_timestamp_approach(test_path, time_delta_sec=time_delta_sec,
-                                                      timestamp_format='%Y-%m-%d %H:%M:%S,%f',
-                                                      cached_workflow_path=r'..\cached\HDFS\test_workflow.csv')
-    x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\test_workflow.csv')
+    # x_train = dataloader.load_HDFS_data_timestamp_approach(test_path, time_delta_sec=time_delta_sec,
+    #                                                   timestamp_format='%Y-%m-%d %H:%M:%S,%f',
+    #                                                   cached_workflow_path=r'..\cached\HDFS\test_workflow.csv')
+    x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\train_workflow.csv')
     x_train = feature_extractor.transform(x_train)
     prediction = model.predict(x_train)
 

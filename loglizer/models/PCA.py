@@ -1,30 +1,19 @@
-"""
-The implementation of PCA model for anomaly detection.
-
-Authors: 
-    LogPAI Team
-
-Reference: 
-    [1] Wei Xu, Ling Huang, Armando Fox, David Patterson, Michael I. Jordan. 
-        Large-Scale System Problems Detection by Mining Console Logs. ACM 
-        Symposium on Operating Systems Principles (SOSP), 2009.
-
-"""
-
 import numpy as np
+import pandas as pd
+
 
 class PCA(object):
 
-    def __init__(self, n_components=0.95, threshold=None, c_alpha=3.2905):
-        """ The PCA model for anomaly detection
+    def __init__(self, n_components=0.95, threshold=None, c_alpha=1.7507):
+        """
+            The PCA model for anomaly detection
 
-        Attributes
-        ----------
-            proj_C: The projection matrix for projecting feature vector to abnormal space
+            Args:
+                proj_C: The projection matrix for projecting feature vector to abnormal space
             n_components: float/int, number of principal compnents or the variance ratio they cover
-            threshold: float, the anomaly detection threshold. When setting to None, the threshold 
+            threshold: float, the anomaly detection threshold. When setting to None, the threshold
                 is automatically caculated using Q-statistics
-            c_alpha: float, the c_alpha parameter for caculating anomaly detection threshold using 
+            c_alpha: float, the c_alpha parameter for caculating anomaly detection threshold using
                 Q-statistics. The following is lookup table for c_alpha:
                 c_alpha = 1.7507; # alpha = 0.08
                 c_alpha = 1.9600; # alpha = 0.05
@@ -35,8 +24,8 @@ class PCA(object):
                 c_alpha = 3.4808;  # alpha = 0.0005
                 c_alpha = 3.8906;  # alpha = 0.0001
                 c_alpha = 4.4172;  # alpha = 0.00001
-        """
 
+        """
         self.proj_C = None
         self.components = None
         self.n_components = n_components
@@ -46,11 +35,12 @@ class PCA(object):
 
     def fit(self, X):
         """
-        Auguments
-        ---------
-            X: ndarray, the event count matrix of shape num_instances-by-num_events
-        """
+            Fits PCA model on train data
 
+            Args:
+                X: ndarray, the event count matrix of shape num_instances-by-num_events
+
+        """
         print('====== Model summary ======')
         num_instances, num_events = X.shape
         X_cov = np.dot(X.T, X) / float(num_instances)
@@ -81,17 +71,35 @@ class PCA(object):
                     phi[i] += np.power(sigma[j], i + 1)
             h0 = 1.0 - 2 * phi[0] * phi[2] / (3.0 * phi[1] * phi[1])
             self.threshold = phi[0] * np.power(self.c_alpha * np.sqrt(2 * phi[1] * h0 * h0) / phi[0]
-                                               + 1.0 + phi[1] * h0 * (h0 - 1) / (phi[0] * phi[0]), 
+                                               + 1.0 + phi[1] * h0 * (h0 - 1) / (phi[0] * phi[0]),
                                                1.0 / h0)
         print('SPE threshold: {}\n'.format(self.threshold))
 
+
+    def get_SPE_for_single_seq(self, single_seq):
+        y_a = np.dot(self.proj_C, single_seq)
+        SPE = np.dot(y_a, y_a)
+        return SPE
+
+
     def predict(self, X):
+        """
+            Predict anomalies on given data
+
+            Args:
+                X: array of lists of event id's np.array(['E21', 'E22', ...], [...],...)
+            Returns:
+                y_pred: array of predictions np.array(1., 0.,...)
+                        1. - anomaly
+
+        """
         assert self.proj_C is not None, 'PCA model needs to be trained before prediction.'
-        y_pred = np.zeros(X.shape[0])
+        y_pred = [0] * X.shape[0]
+        SPE_pred = [0] * X.shape[0]
         for i in range(X.shape[0]):
-            y_a = np.dot(self.proj_C, X[i, :])
-            SPE = np.dot(y_a, y_a)
+            SPE = self.get_SPE_for_single_seq(X[i, :])
+            SPE_pred[i] = SPE
             if SPE > self.threshold:
                 y_pred[i] = 1
-        return y_pred
+        return pd.DataFrame({'SPE':SPE_pred,'prediction' :y_pred})
 

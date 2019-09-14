@@ -22,10 +22,11 @@ def load_HDFS_data_timestamp_approach(input_path, time_delta_sec, timestamp_form
 
     struct_log = pd.read_csv(input_path, sep=sep,encoding=encoding,header=0)
     freq_val = str(time_delta_sec) + 'S'
-    struct_log['timestamp'] = pd.to_datetime(struct_log['Timestamp'], format=timestamp_format, errors='coerce')
-    struct_log.set_index('timestamp', inplace=True)
+    struct_log['Timestamp'] = pd.to_datetime(struct_log['Timestamp'], format=timestamp_format, errors='coerce')
+    struct_log = struct_log.drop(['LineId', 'Pid'], axis=1)
+    struct_log.set_index('Timestamp', inplace=True)
     struct_log = struct_log.groupby(pd.Grouper(freq=freq_val)).apply(lambda x:(x + ',').sum())
-    struct_log = pd.DataFrame(struct_log['event_id'])
+    struct_log = pd.DataFrame(struct_log['EventId'])
 
     # drop rows of NaT values in struct_log.index
     struct_log = struct_log[pd.notnull(struct_log.index)]
@@ -35,7 +36,7 @@ def load_HDFS_data_timestamp_approach(input_path, time_delta_sec, timestamp_form
         group_id_list = str(idx)
         if not group_id_list in data_dict:
             data_dict[group_id_list] = None
-        data_dict[group_id_list] = list(filter(None, str(row['event_id']).split(',')))
+        data_dict[group_id_list] = list(filter(None, str(row['EventId']).split(',')))
     data_df = pd.DataFrame(list(data_dict.items()), columns=['group_id', 'event_sequence'])
 
     data_df['number_of_events'] = data_df['event_sequence'].apply(lambda x: len(x))

@@ -15,8 +15,8 @@ def make_key_id_dict(input_path, output_path, encoding='utf-8'):
         Args:
             input_path: input path to file with log for which
     """
-    df = pd.read_csv(input_path, encoding=encoding, sep='~', header=0)
-    df["key_and_id"] = df["template"] + "~" +df["event_id"]
+    df = pd.read_csv(input_path, encoding=encoding, header=0)
+    df["key_and_id"] = df["EventTemplate"] + "~" +df["EventId"]
     np.savetxt(output_path, df["key_and_id"].unique(), header="key~id",
                comments='', fmt='%s')
 

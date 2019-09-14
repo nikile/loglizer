@@ -51,7 +51,7 @@ def load_HDFS_data_timestamp_approach(input_path, time_delta_sec, timestamp_form
     return x_data
 
 
-def load_data_debug(input_path):
+def load_HDFS_data_debug(input_path):
     """
         Downloads cached workflow data from *.csv file
         to speed up the analysis of logs and debug.

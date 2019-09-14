@@ -7,40 +7,68 @@
         model.predict(): predict anomalies on given data
         model.evaluate(): evaluate model accuracy with labeled data
 '''
-
-import sys
-sys.path.append('../')
 from loglizer.models import PCA
-from loglizer import dataloader, preprocessing
-
-struct_log = '../data/HDFS/HDFS_100k.log_structured.csv' # The structured log file
+from loglizer import dataloader, preprocessing, graphs_and_reports
 
 if __name__ == '__main__':
-    ## 1. Load strutured log file and extract feature vectors
-    # Save the raw event sequence file by setting save_csv=True
-    (x_train, _), (_, _) = dataloader.load_HDFS(struct_log, window='session', 
-                                                split_type='sequential', save_csv=True)
-    feature_extractor = preprocessing.FeatureExtractor()
-    x_train = feature_extractor.fit_transform(x_train, term_weighting='tf-idf', 
-                                              normalization='zero-mean')
-    
-    ## 2. Train an unsupervised model
-    print('Train phase:')
-    # Initialize PCA, or other unsupervised models, LogClustering, InvariantsMiner
-    model = PCA() 
-    # Model hyper-parameters may be sensitive to log data, here we use the default for demo
-    model.fit(x_train)
-    # Make predictions and manually check for correctness. Details may need to go into the raw logs
-    y_train = model.predict(x_train) 
 
-    ## 3. Use the trained model for online anomaly detection
-    print('Test phase:')
-    # Load another new log file. Here we use struct_log for demo only
-    (x_test, _), (_, _) = dataloader.load_HDFS(struct_log, window='session', split_type='sequential')
-    # Go through the same feature extraction process with training, using transform() instead
-    x_test = feature_extractor.transform(x_test) 
-    # Finally make predictions and alter on anomaly cases
-    y_test = model.predict(x_test)
+    train_path = r'..\data\HDFS\presentation_train.csv'
+    test_path = r'..\data\HDFS\presentation_test.csv'
+    # time period in seconds within which anomalies will be searched
+    time_delta_sec = 100
+
+    x_train = dataloader.load_HDFS_data_timestamp_approach(train_path, time_delta_sec=time_delta_sec,
+                                                          timestamp_format='%Y-%m-%d %H:%M:%S,%f',
+                                                          cached_workflow_path=r'..\cached\HDFS\train_workflow.csv')
+    x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\train_workflow.csv')
+
+    graphs_and_reports.make_key_id_dict(input_path="../data/HDFS/presentation_train.csv",
+                                        output_path="../analysis_results/HDFS/key_dict.txt")
+
+    feature_extractor = preprocessing.FeatureExtractor()
+    x_train = feature_extractor.df_fit_transform(x_train)
+    # x_train = feature_extractor.fit_transform(x_train)
+
+    graphs_and_reports.add_weights_to_key_dict("../analysis_results/HDFS/key_dict.txt",
+                                               feature_extractor.idf_vec.to_dict(),
+                                               output_path='../analysis_results/HDFS/key_dict.txt')
+    graphs_and_reports.get_keys_chart("../analysis_results/HDFS/key_dict.txt",
+                                      output_path=r'../analysis_results/HDFS/keys_chart.png')
+
+    ## Train an unsupervised model
+    print('Train phase:')
+    # Initialize PCA
+    model = PCA()
+    model.fit(x_train)
+
+    print('Prediction phase:')
+    prediction = model.predict(x_train.values)
+
+    print(prediction)
+    print(prediction['prediction'].values)
+
+    x_train = dataloader.load_HDFS_data_timestamp_approach(test_path, time_delta_sec=time_delta_sec,
+                                                      timestamp_format='%Y-%m-%d %H:%M:%S,%f',
+                                                      cached_workflow_path=r'..\cached\HDFS\test_workflow.csv')
+    x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\test_workflow.csv')
+    x_train = feature_extractor.transform(x_train)
+    prediction = model.predict(x_train)
+
+    print(prediction)
+    print(prediction['prediction'].values)
+
+    graphs_and_reports.get_anomalies_report(r'..\cached\HDFS\test_workflow.csv',
+                                            r'../analysis_results/HDFS/key_dict.txt',
+                                            prediction, r'..\analysis_results\HDFS\anomalies_report.txt',
+                                            time_delta_sec=time_delta_sec)
+    graphs_and_reports.get_graph(r'..\cached\HDFS\test_workflow.csv', prediction, model.threshold,
+                                 output_path=r'../analysis_results/HDFS/graph.png')
+
+    # x_test = feature_extractor.transform(np.array([['E10', 'E10', 'E10', 'E10', 'E10', 'E10', 'E10']]))
+    # y_test = model.predict(x_test)
+    # print(y_test)
+
+    print('Done')
     
 
 

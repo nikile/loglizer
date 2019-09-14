@@ -12,13 +12,13 @@ from loglizer import dataloader, preprocessing, graphs_and_reports
 
 if __name__ == '__main__':
 
-    train_path = r'..\data\HDFS\presentation_train.csv'
-    test_path = r'..\data\HDFS\presentation_test.csv'
+    train_path = r'..\data\HDFS\test.csv'
+    test_path = r'..\data\HDFS\HDFS_100k.log_structured.csv'
     # time period in seconds within which anomalies will be searched
     time_delta_sec = 100
 
     x_train = dataloader.load_HDFS_data_timestamp_approach(train_path, time_delta_sec=time_delta_sec,
-                                                          timestamp_format='%Y-%m-%d %H:%M:%S,%f',
+                                                          timestamp_format='%Y-%m-%d %H:%M:%S',
                                                           cached_workflow_path=r'..\cached\HDFS\train_workflow.csv')
     x_train = dataloader.load_HDFS_data_debug(r'..\cached\HDFS\train_workflow.csv')
 

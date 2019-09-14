@@ -22,7 +22,7 @@ def load_HDFS_data_timestamp_approach(input_path, time_delta_sec, timestamp_form
 
     struct_log = pd.read_csv(input_path, sep=sep,encoding=encoding,header=0)
     freq_val = str(time_delta_sec) + 'S'
-    struct_log['timestamp'] = pd.to_datetime(struct_log['timestamp'], format=timestamp_format, errors='coerce')
+    struct_log['timestamp'] = pd.to_datetime(struct_log['Timestamp'], format=timestamp_format, errors='coerce')
     struct_log.set_index('timestamp', inplace=True)
     struct_log = struct_log.groupby(pd.Grouper(freq=freq_val)).apply(lambda x:(x + ',').sum())
     struct_log = pd.DataFrame(struct_log['event_id'])

@@ -126,6 +126,7 @@ class FeatureExtractor(object):
 
         num_instance, num_event = X.shape
         # tf - idf term weighting
+        # tf - idf term weighting
         idf_matrix = X * np.tile(self.idf_vec, (num_instance, 1))
         X = idf_matrix
         # zero-mean normalization

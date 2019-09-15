@@ -66,13 +66,13 @@ For more details, please follow [the demo](./docs/demo.md) in the docs to get st
 
 ## Analysis results for [sample data](https://github.com/nikile/loglizer/tree/master/data/HDFS)
 
-The graph illustrating the search for anomalies based on a comparison of the SPE (squared prediction error) threshold calculated for all training dataset and SPE calculated for all events that occurred in the corresponding time period.
+The graph illustrates anomalies search based on a comparison of the SPE (squared prediction error) threshold calculated for all training dataset and SPE calculated for events that occurred in the corresponding time period.
 If the SPE calculated at a given moment of time is greater than SPE threshold , then this is considered as an anomaly.
-For this data example, events are analyzed per second (alternative analyzed time periods can be specified in the [code](https://github.com/nikile/loglizer/blob/master/demo/PCA_HDFS_demo.py) by time_delta_sec parameter)
+For this data example, events are analyzed per second (alternatively analyzed time periods can be specified in the [code](https://github.com/nikile/loglizer/blob/master/demo/PCA_HDFS_demo.py) by time_delta_sec parameter)
 
 <p align="center"> <img src="https://github.com/nikile/loglizer/blob/master/analysis_results/HDFS/graph.png"></p>
 
-All events have their template, id and weight counted by tf–idf method. SPE is calculated from these weights.
+All events have id,template and weight counted by tf–idf method. SPE is calculated from these weights.
 
 <p align="center"> <img src="https://github.com/nikile/loglizer/blob/master/analysis_results/HDFS/keys_chart.png"></p>
 

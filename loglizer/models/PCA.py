@@ -4,7 +4,7 @@ import pandas as pd
 
 class PCA(object):
 
-    def __init__(self, n_components=0.95, threshold=None, c_alpha=1.7507):
+    def __init__(self, n_components=0.95, threshold=None, c_alpha=4.4172):
         """
             The PCA model for anomaly detection
 

@@ -1,0 +1,20 @@
+key~id~weight
+Changing block file offset of block <*> from <*> to <*> meta file offset to <*>~E15~7.358193742733032
+PacketResponder <*> for block <*> Interrupted.~E8~7.358193742733032
+BLOCK* NameSystem.addStoredBlock: Redundant addStoredBlock request received for <*> on <*> size <*>~E27~7.358193742733032
+Exception in receiveBlock for block <*> <*>~E14~6.25958146073159
+PacketResponder <*> <*> Exception <*>~E10~6.25958146073159
+Receiving empty packet for block <*>~E13~4.960298479025571
+Deleting block <*> file <*>~E21~4.413754773040276
+BLOCK* ask <*> to replicate <*> to datanode(s) <*>~E25~4.313671314533419
+<*> Served block <*> to /<*>~E3~4.18013992196842
+<*> Starting thread to transfer block <*> to <*>~E18~4.139317927464832
+<*>:Transmitted block <*> to /<*>~E16~4.139317927464832
+Received block <*> src: /<*> dest: /<*> of size <*>~E6~4.062356886358333
+writeBlock <*> received exception <*>~E7~3.247319888395787
+BLOCK* NameSystem.allocateBlock:<*>~E22~0.6861608072593072
+Receiving block <*> src: /<*> dest: /<*>~E5~0.6661100102139973
+Received block <*> of size <*> from /<*>~E9~0.6035896532334152
+PacketResponder <*> for block <*> terminating~E11~0.6000992482936873
+BLOCK* NameSystem.addStoredBlock: blockMap updated: <*> is added to <*> size <*>~E26~0.5966209839174029
+Verification succeeded for <*>~E2~0.34517796308440174

@@ -45,23 +45,23 @@ def get_graph(workflow_path, prediction, threshold, tick_period_in_sec = 900, ou
     data_df['group_id'] = pd.to_datetime(data_df['group_id'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
     fig, ax = pyplot.subplots()
     pyplot.setp(ax.xaxis.get_majorticklabels(), rotation=90)
-    pyplot.bar(data_df['group_id'].values, data_df['SPE'].values, width=0.004)
+    pyplot.bar(data_df['group_id'].values, data_df['SPE'].values, width=0.00004)
     ax.xaxis.set_major_locator(mdates.SecondLocator(interval=tick_period_in_sec))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
     #draw red vertical line for every anomaly found
     for idx, row in data_df.iterrows():
         if row['prediction'] == 1:
-            ax.axvline(x=row['group_id'], color='r', alpha=0.4)
+            ax.axvline(x=row['group_id'], color='r', alpha=0.2)
 
     pyplot.xlabel('Timestamp')
-    pyplot.ylabel('SPE')
-    pyplot.title('Graph')
+    pyplot.ylabel('SPE: Squared Prediction Error')
+    pyplot.title('')
     pyplot.axhline(y=threshold, color='g', linestyle='-')
     trans = transforms.blended_transform_factory(
         ax.get_yticklabels()[0].get_transform(), ax.transData)
-    ax.text(0, threshold, "{:.0f}".format(threshold), color="g", ha="right", transform=trans, va="center")
-    pyplot.gcf().set_size_inches((20, 10), forward=False)
+    ax.text(0, threshold, "SPE threshold:     \n            {:.0f}              ".format(threshold), color="g", ha="right", transform=trans, va="center")
+    pyplot.gcf().set_size_inches((11, 8), forward=False)
     #pyplot.show()
     fig.savefig(output_path, dpi=fig.dpi)
 
@@ -141,18 +141,20 @@ def get_keys_chart(path_to_key_id_weight_df, output_path = r'keys_chart.png'):
     x = key_id_weight_df['key'].values
     y = key_id_weight_df['weight'].values
     fig, ax = pyplot.subplots()
-    for tick in ax.yaxis.get_major_ticks():
-        tick.label.set_fontsize(15)
+    # for bigger "keys text" font set: fontsize=15
+    # for tick in ax.yaxis.get_major_ticks():
+    #     tick.label.set_fontsize(15)
     width = 1  # the width of the bars
     ind = 2 * np.arange(len(y))  # the x locations for the groups
     ax.barh(ind, y, width, color='b')
     ax.set_yticks(ind + width / 2)
     ax.set_yticklabels(x, minor=False)
     for i, v in enumerate(y):
-        ax.text(v, ind[i] - width / 4, "{0:.2f}".format(round(v, 3)), color='black', fontsize=15)
-    pyplot.gcf().set_size_inches(50, 100)
+        #for bigger "keys weights" font set: fontsize=15
+        ax.text(v, ind[i] - width / 4, "{0:.2f}".format(round(v, 3)), color='black')
+    pyplot.gcf().set_size_inches(14, 6)
     pyplot.subplots_adjust(left=0.6)
-    pyplot.title('keys chart')
+    pyplot.title('Events "weights" counted by tf–idf statistic')
     pyplot.xlabel('tf-idf')
     pyplot.ylabel('keys')
     pyplot.box(False)

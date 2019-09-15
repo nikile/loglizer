@@ -28,7 +28,8 @@ Anomaly detection unsupervised model :
 
 
 ## Log data
-[Log data](https://github.com/logpai/loghub/tree/master/HDFS) used in the following fork.
+[Log data](https://github.com/nikile/loglizer/tree/master/data/HDFS) used in the following fork.
+[Or from original repository](https://github.com/logpai/loghub/tree/master/HDFS)
 
 ## Install
 ```bash
@@ -45,7 +46,7 @@ pip install -r requirements.txt
 
 # Feature extraction and transformation
 feature_extractor = preprocessing.FeatureExtractor()
-feature_extractor.fit_transform(...) 
+feature_extractor.fit_transform(...)
 
 # Model training
 model = PCA()
@@ -62,3 +63,22 @@ model.predict(...) # predict anomalies on given data
 ```
 
 For more details, please follow [the demo](./docs/demo.md) in the docs to get started.
+
+## Analysis results for [sample data](https://github.com/nikile/loglizer/tree/master/data/HDFS)
+
+The graph illustrating the search for anomalies based on a comparison of the SPE (squared prediction error) threshold calculated for all training dataset and SPE calculated for all events that occurred in the corresponding time period.
+If the SPE calculated at a given moment of time is greater than SPE threshold , then this is considered as an anomaly.
+For this data example, events are analyzed per second (alternative analyzed time periods can be specified in the [code](https://github.com/nikile/loglizer/blob/master/demo/PCA_HDFS_demo.py) by time_delta_sec parameter)
+
+<p align="center"> <img src="https://github.com/nikile/loglizer/blob/master/analysis_results/HDFS/graph.png"></p>
+
+All events have their template, id and weight counted by tf–idf method. SPE is calculated from these weights.
+
+<p align="center"> <img src="https://github.com/nikile/loglizer/blob/master/analysis_results/HDFS/keys_chart.png"></p>
+
+All found anomalies are recorded in the [report](https://github.com/nikile/loglizer/blob/master/analysis_results/HDFS/anomalies_report.txt)
+
+
+
+
+

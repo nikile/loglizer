@@ -11,6 +11,8 @@ def load_HDFS_data_timestamp_approach(input_path, time_delta_sec, timestamp_form
 
         Args:
             input_path: path to cached workflow csv file
+            time_delta_sec: analyzed period of time in seconds
+            timestamp_format: timestamp format in logs
             cached_workflow_path: path to cached workflow csv file
             cache_workflow: cache workflow or not
 
